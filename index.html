@@ -15,7 +15,8 @@
   .groups { padding:10px 16px; background:#fff; border-bottom:1px solid #E4E3DD; display:flex; gap:10px; flex-wrap:wrap; }
   .group-card { border:1px solid #E4E3DD; border-radius:10px; padding:8px 12px; cursor:pointer; min-width:140px; flex:1 1 150px; max-width:260px; transition:box-shadow .15s; }
   .group-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.12); }
-  .group-card .gname { font-size:13px; font-weight:600; color:#1A1B1C; display:flex; align-items:center; gap:6px; }
+  .group-card .gname { font-size:13px; font-weight:600; color:#1A1B1C; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .group-card .gname .cls-tag { white-space:nowrap; }
   .group-card .gnames { font-size:12px; color:#4B5563; margin-top:4px; line-height:1.6; }
   .legend { padding:7px 16px; background:#fff; border-bottom:1px solid #E4E3DD; font-size:12px; color:#4B5563; display:flex; gap:16px; flex-wrap:wrap; }
   #map { width:100%; height:calc(100vh - 190px); min-height:420px; }
@@ -29,7 +30,6 @@
 </style>
 </head>
 <body>
-
 <div class="header">
   <div>
     <h1>班级家访足迹地图 · 片区分组</h1>
@@ -39,37 +39,29 @@
     <div class="stat total" id="statGroups">0 个片区</div>
   </div>
 </div>
-
 <div class="groups" id="groupCards"></div>
-
 <div class="legend">
   <span>🔴 已家访</span>
   <span>🟠 未家访</span>
   <span>同卡片 = 同片区（建议同一天走访）</span>
   <span>点击卡片 → 地图定位</span>
 </div>
-
 <div id="map"></div>
 <div class="foot">数据由家访智能体自动生成 · 点击圆点查看学生</div>
-
 <script>
-  var STUDENTS = [{"address": "江苏省无锡市惠山区洛社镇杨市园大街", "cls": "初三3班", "name": "李明", "student_id": "C230301", "group": "江苏省无锡市惠山区洛社镇", "visited": true, "lng": 120.139649, "lat": 31.624201}, {"address": "江苏省无锡市惠山区洛社镇人民路", "cls": "初三3班", "name": "王雨欣", "student_id": "C230302", "group": "江苏省无锡市惠山区洛社镇", "visited": true, "lng": 120.226219, "lat": 31.704388}, {"address": "江苏省无锡市惠山区阳山镇安阳路", "cls": "初三3班", "name": "张浩然", "student_id": "C230303", "group": "江苏省无锡市惠山区阳山镇", "visited": false, "lng": 120.098849, "lat": 31.577931}, {"address": "江苏省无锡市惠山区玉祁街道文浩路", "cls": "初三3班", "name": "陈思远", "student_id": "C230304", "group": "江苏省无锡市惠山区玉祁街道", "visited": false, "lng": 120.186842, "lat": 31.708448}];
+  var STUDENTS = [{"address": "江苏省无锡市惠山区洛社镇杨市园大街", "cls": "初三3班", "name": "李明", "student_id": "C230301", "group": "洛社镇", "visited": true, "lng": 120.139649, "lat": 31.624201}, {"address": "江苏省无锡市惠山区洛社镇人民路", "cls": "初三3班", "name": "王雨欣", "student_id": "C230302", "group": "洛社镇", "visited": true, "lng": 120.226219, "lat": 31.704388}, {"address": "江苏省无锡市惠山区阳山镇安阳路", "cls": "初三3班", "name": "张浩然", "student_id": "C230303", "group": "阳山镇", "visited": false, "lng": 120.098849, "lat": 31.577931}, {"address": "江苏省无锡市惠山区玉祁街道文浩路", "cls": "初三3班", "name": "陈思远", "student_id": "C230304", "group": "玉祁街道", "visited": false, "lng": 120.186842, "lat": 31.708448}];
   STUDENTS = STUDENTS.filter(function (s) { return s.lng && s.lat; });
-
   var CLS_COLORS = ['#EA6668', '#4A9FD8', '#2E8B57', '#8E5AC8', '#B08968', '#E1B98F'];
-
   function clsColor(cls) {
     var h = 0;
     for (var i = 0; i < cls.length; i++) h = (h * 31 + cls.charCodeAt(i)) % 997;
     return CLS_COLORS[h % CLS_COLORS.length];
   }
-
   function distKm(lng1, lat1, lng2, lat2) {
     var dx = (lng1 - lng2) * 111 * Math.cos((lat1 + lat2) / 2 * Math.PI / 180);
     var dy = (lat1 - lat2) * 111;
     return Math.sqrt(dx * dx + dy * dy);
   }
-
   function clusterStudents(list) {
     var groups = [];
     var groupMap = {};
@@ -91,21 +83,16 @@
     });
     return groups;
   }
-
   var MAP_KEY = "210d3c6c3af59325ca173b83dcdafb41";
   document.write('<script src="https://webapi.amap.com/maps?v=1.4.15&key=' + MAP_KEY + '&plugin=AMap.Scale,AMap.ToolBar"><\/script>');
-
   window._AMapLoaded = function () {
     var map = new AMap.Map('map', { zoom: 10, center: [120.21, 31.65] });
     map.addControl(new AMap.Scale());
     map.addControl(new AMap.ToolBar({ position: 'RB' }));
-
     var groups = clusterStudents(STUDENTS);
     var allMarkers = [];
-
     document.getElementById('statTotal').textContent = '共 ' + STUDENTS.length + ' 户';
     document.getElementById('statGroups').textContent = groups.length + ' 个片区';
-
     var cardBox = document.getElementById('groupCards');
     groups.forEach(function (g, gi) {
       var doneN = 0, todoN = 0;
@@ -114,12 +101,11 @@
       var card = document.createElement('div');
       card.className = 'group-card';
       card.style.borderLeft = '4px solid ' + ccolor;
-      card.innerHTML = '<div class="gname">📍 ' + g.name + ' <span style="font-weight:600;color:' + ccolor + ';font-size:12px;">' + g.cls + '</span></div>' +
+      card.innerHTML = '<div class="gname">📍 ' + g.name + ' <span class="cls-tag" style="font-weight:600;color:' + ccolor + ';font-size:12px;">' + g.cls + '</span></div>' +
                        '<div class="gnames"><span style="color:#C0392B;font-weight:600;">已家访 ' + doneN + ' 人</span>' +
                        ' &nbsp; <span style="color:#B45309;font-weight:600;">未家访 ' + todoN + ' 人</span></div>';
       cardBox.appendChild(card);
     });
-
     groups.forEach(function (g, gi) {
       var groupMarkers = [];
       g.students.forEach(function (s) {
@@ -156,12 +142,10 @@
         });
       })(gi, groupMarkers);
     });
-
     if (allMarkers.length > 0) {
       map.setFitView(allMarkers, false, [60, 60, 60, 60]);
     }
   };
-
   var timer = setInterval(function () {
     if (window.AMap) { clearInterval(timer); window._AMapLoaded(); }
   }, 100);
