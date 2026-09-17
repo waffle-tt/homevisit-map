@@ -17,7 +17,6 @@
   .group-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.12); }
   .group-card .gname { font-size:13px; font-weight:600; color:#1A1B1C; display:flex; align-items:center; gap:6px; }
   .group-card .gnames { font-size:12px; color:#4B5563; margin-top:4px; line-height:1.6; }
-  .gdot { width:12px; height:12px; border-radius:50%; display:inline-block; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,0.15); }
   .legend { padding:7px 16px; background:#fff; border-bottom:1px solid #E4E3DD; font-size:12px; color:#4B5563; display:flex; gap:16px; flex-wrap:wrap; }
   #map { width:100%; height:calc(100vh - 190px); min-height:420px; }
   .popup-name { font-weight:600; font-size:14px; margin-bottom:4px; }
@@ -51,38 +50,26 @@
 </div>
 
 <div id="map"></div>
-<div class="foot">分组规则：相距 ≤3 公里的学生自动归为一组 · 组内按距离排列</div>
+<div class="foot">数据由家访智能体自动生成 · 点击圆点查看学生</div>
 
 <script>
-  /* ============ 学生数据区（工作流3 生成后替换这里） ============ */
-  var STUDENTS = [
-    {"student_id":"C230301","name":"李明","cls":"初三3班","lng":120.139649,"lat":31.624201,"visited":true,"group":"洛社镇杨市","address":"洛社镇杨市园大街"},
-    {"student_id":"C230302","name":"王雨欣","cls":"初三3班","lng":120.141100,"lat":31.624500,"visited":true,"group":"洛社镇杨市","address":"洛社镇杨市园大街"},
-    {"student_id":"C230303","name":"张浩然","cls":"初三3班","lng":120.098849,"lat":31.577931,"visited":false,"group":"阳山镇","address":"阳山镇安阳路"},
-    {"student_id":"C230304","name":"陈思远","cls":"初三3班","lng":120.186842,"lat":31.708448,"visited":false,"group":"玉祁街道","address":"玉祁街道文浩路"},
-    {"student_id":"C230501","name":"周杰","cls":"初三5班","lng":120.141520,"lat":31.625320,"visited":false,"group":"洛社镇杨市","address":"洛社镇杨市园大街"},
-    {"student_id":"C230502","name":"吴雨桐","cls":"初三5班","lng":120.143100,"lat":31.623800,"visited":false,"group":"洛社镇杨市","address":"洛社镇杨市园大街"}
-  ];
-  /* ============================================================ */
+  var STUDENTS = [{"address": "江苏省无锡市惠山区洛社镇杨市园大街", "cls": "初三3班", "name": "李明", "student_id": "C230301", "visited": true, "lng": 120.139649, "lat": 31.624201}, {"address": "江苏省无锡市惠山区洛社镇人民路", "cls": "初三3班", "name": "王雨欣", "student_id": "C230302", "visited": true, "lng": 120.226219, "lat": 31.704388}, {"address": "江苏省无锡市惠山区阳山镇安阳路", "cls": "初三3班", "name": "张浩然", "student_id": "C230303", "visited": false, "lng": 120.098849, "lat": 31.577931}, {"address": "江苏省无锡市惠山区玉祁街道文浩路", "cls": "初三3班", "name": "陈思远", "student_id": "C230304", "visited": false, "lng": 120.186842, "lat": 31.708448}];
+  STUDENTS = STUDENTS.filter(function (s) { return s.lng && s.lat; });
 
-  /* 颜色：红=已家访，橙=未家访；CLS_COLORS 班级卡片配色 */
   var CLS_COLORS = ['#EA6668', '#4A9FD8', '#2E8B57', '#8E5AC8', '#B08968', '#E1B98F'];
 
-  /* 班级 → 颜色（稳定映射，同班同色） */
   function clsColor(cls) {
     var h = 0;
     for (var i = 0; i < cls.length; i++) h = (h * 31 + cls.charCodeAt(i)) % 997;
     return CLS_COLORS[h % CLS_COLORS.length];
   }
 
-  /* 两点距离（公里） */
   function distKm(lng1, lat1, lng2, lat2) {
     var dx = (lng1 - lng2) * 111 * Math.cos((lat1 + lat2) / 2 * Math.PI / 180);
     var dy = (lat1 - lat2) * 111;
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  /* 分组：按「班级 + 片区」分（同片区不同班级 = 不同卡片）；无 group 的按 ≤3km 聚类 */
   function clusterStudents(list) {
     var groups = [];
     var groupMap = {};
@@ -94,7 +81,6 @@
       }
       groupMap[key].push(s);
     });
-    /* 组内按到组中心距离排序 */
     groups.forEach(function (g) {
       var clng = 0, clat = 0;
       g.students.forEach(function (s) { clng += s.lng; clat += s.lat; });
@@ -120,7 +106,6 @@
     document.getElementById('statTotal').textContent = '共 ' + STUDENTS.length + ' 户';
     document.getElementById('statGroups').textContent = groups.length + ' 个片区';
 
-    /* 分组卡片：片区名+班级（班级配色），只显示已访/未访人数 */
     var cardBox = document.getElementById('groupCards');
     groups.forEach(function (g, gi) {
       var doneN = 0, todoN = 0;
@@ -135,7 +120,6 @@
       cardBox.appendChild(card);
     });
 
-    /* 地图标记：红=已家访，橙=未家访 */
     groups.forEach(function (g, gi) {
       var groupMarkers = [];
       g.students.forEach(function (s) {
@@ -161,7 +145,6 @@
         groupMarkers.push(marker);
         allMarkers.push(marker);
       });
-      /* 点击卡片 → 定位到该组 */
       var cards = cardBox.getElementsByClassName('group-card');
       (function (gi, groupMarkers) {
         cards[gi].addEventListener('click', function () {
