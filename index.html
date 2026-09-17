@@ -43,8 +43,8 @@
 <div class="groups" id="groupCards"></div>
 
 <div class="legend">
-  <span><i class="dot red"></i>已家访</span>
-  <span><i class="dot orange"></i>未家访</span>
+  <span>🔴 已家访</span>
+  <span>🟠 未家访</span>
   <span>同卡片 = 同片区（建议同一天走访）</span>
   <span>点击卡片 → 地图定位</span>
 </div>
@@ -53,7 +53,7 @@
 <div class="foot">数据由家访智能体自动生成 · 点击圆点查看学生</div>
 
 <script>
-  var STUDENTS = [{"address": "江苏省无锡市惠山区洛社镇杨市园大街", "cls": "初三3班", "name": "李明", "student_id": "C230301", "visited": true, "lng": 120.139649, "lat": 31.624201}, {"address": "江苏省无锡市惠山区洛社镇人民路", "cls": "初三3班", "name": "王雨欣", "student_id": "C230302", "visited": true, "lng": 120.226219, "lat": 31.704388}, {"address": "江苏省无锡市惠山区阳山镇安阳路", "cls": "初三3班", "name": "张浩然", "student_id": "C230303", "visited": false, "lng": 120.098849, "lat": 31.577931}, {"address": "江苏省无锡市惠山区玉祁街道文浩路", "cls": "初三3班", "name": "陈思远", "student_id": "C230304", "visited": false, "lng": 120.186842, "lat": 31.708448}];
+  var STUDENTS = [{"address": "江苏省无锡市惠山区洛社镇杨市园大街", "cls": "初三3班", "name": "李明", "student_id": "C230301", "group": "江苏省无锡市惠山区洛社镇", "visited": true, "lng": 120.139649, "lat": 31.624201}, {"address": "江苏省无锡市惠山区洛社镇人民路", "cls": "初三3班", "name": "王雨欣", "student_id": "C230302", "group": "江苏省无锡市惠山区洛社镇", "visited": true, "lng": 120.226219, "lat": 31.704388}, {"address": "江苏省无锡市惠山区阳山镇安阳路", "cls": "初三3班", "name": "张浩然", "student_id": "C230303", "group": "江苏省无锡市惠山区阳山镇", "visited": false, "lng": 120.098849, "lat": 31.577931}, {"address": "江苏省无锡市惠山区玉祁街道文浩路", "cls": "初三3班", "name": "陈思远", "student_id": "C230304", "group": "江苏省无锡市惠山区玉祁街道", "visited": false, "lng": 120.186842, "lat": 31.708448}];
   STUDENTS = STUDENTS.filter(function (s) { return s.lng && s.lat; });
 
   var CLS_COLORS = ['#EA6668', '#4A9FD8', '#2E8B57', '#8E5AC8', '#B08968', '#E1B98F'];
