@@ -49,7 +49,7 @@
 <div id="map"></div>
 <div class="foot">数据由家访智能体自动生成 · 点击圆点查看学生</div>
 <script>
-  var STUDENTS = [{"address": "江苏省无锡市惠山区洛社镇中兴东路12号", "cls": "初三3班", "group": "洛社镇", "name": "李明", "student_id": "C230301", "visited": true, "lng": 120.190891, "lat": 31.64451}, {"address": "江苏省无锡市惠山区洛社镇人民北路8号", "cls": "初三3班", "group": "洛社镇", "name": "王雨欣", "student_id": "C230302", "visited": true, "lng": 120.190796, "lat": 31.652947}, {"address": "江苏省无锡市惠山区洛社镇新兴西路25号", "cls": "初三3班", "group": "洛社镇", "name": "张晓晓", "student_id": "C230303", "visited": true, "lng": 120.181113, "lat": 31.642657}, {"address": "江苏省无锡市惠山区洛社镇天奇城36号", "cls": "初三3班", "group": "洛社镇", "name": "赵宇", "student_id": "C230304", "visited": true, "lng": 120.188976, "lat": 31.635923}, {"address": "江苏省无锡市惠山区洛社镇钱巷小区18号", "cls": "初三3班", "group": "洛社镇", "name": "陈静", "student_id": "C230305", "visited": true, "lng": 120.202357, "lat": 31.63925}];
+  var STUDENTS = [];
   STUDENTS = STUDENTS.filter(function (s) { return s.lng && s.lat; });
   var CLS_COLORS = ['#EA6668', '#4A9FD8', '#2E8B57', '#8E5AC8', '#B08968', '#E1B98F'];
   function clsColor(cls) {
